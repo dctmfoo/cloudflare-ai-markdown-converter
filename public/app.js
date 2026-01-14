@@ -231,7 +231,14 @@ convertBtn.addEventListener('click', async () => {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || 'Conversion failed');
+      let errorMessage = error.error || 'Conversion failed';
+      
+      // Show detailed validation errors if available
+      if (error.details && Array.isArray(error.details)) {
+        errorMessage += '\n\n' + error.details.join('\n');
+      }
+      
+      throw new Error(errorMessage);
     }
 
     const resultData = await response.json();
@@ -279,6 +286,12 @@ function showResultsSection() {
 function showError(message) {
   uploadSection.style.display = 'none';
   resultsSection.style.display = 'block';
+  
+  // Format multi-line error messages
+  const formattedMessage = message.split('\n').map(line => 
+    line.trim() ? `<p>${line}</p>` : ''
+  ).join('');
+  
   markdownPreview.innerHTML = `
     <div class="error-message">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -288,7 +301,7 @@ function showError(message) {
       </svg>
       <div>
         <strong>Conversion Failed</strong>
-        <p>${message}</p>
+        ${formattedMessage}
       </div>
     </div>
   `;

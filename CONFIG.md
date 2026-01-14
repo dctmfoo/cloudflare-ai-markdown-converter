@@ -18,15 +18,30 @@
 
 ## How to Enable/Disable Formats
 
-Edit `public/config.js`:
+**You must update BOTH files:**
+
+1. **Backend validation:** Edit `src/formats-config.ts`
+2. **Frontend UI:** Edit `public/config.js`
+
+```typescript
+// src/formats-config.ts
+images: {
+  enabled: false,  // ← Change to true to enable
+  extensions: ['.jpg', '.jpeg', '.png', '.webp', '.svg'],
+  // ...
+}
+```
 
 ```javascript
+// public/config.js
 "images": {
-  "enabled": false,  // ← Change to true to enable
+  "enabled": false,  // ← Must match backend config
   "extensions": [".jpg", ".jpeg", ".png", ".webp", ".svg"],
   // ...
 }
 ```
+
+**Important:** Both configs must match, or users will see confusing errors.
 
 ## Configuration Options
 

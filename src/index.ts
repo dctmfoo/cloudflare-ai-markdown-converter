@@ -1,3 +1,5 @@
+import { isExtensionAllowed, isMimeTypeAllowed, getValidationError } from './formats-config';
+
 export interface Env {
   AI: {
     toMarkdown(files: MarkdownDocument | MarkdownDocument[]): Promise<ConversionResult | ConversionResult[]>;
@@ -64,9 +66,19 @@ export default {
         }
         
         const files: MarkdownDocument[] = [];
+        const validationErrors: string[] = [];
 
         for (const [, value] of formData.entries()) {
           if (value instanceof File) {
+            // Validate file format
+            const isExtensionValid = isExtensionAllowed(value.name);
+            const isMimeValid = isMimeTypeAllowed(value.type);
+            
+            if (!isExtensionValid || !isMimeValid) {
+              validationErrors.push(getValidationError(value.name, value.type));
+              continue; // Skip this file
+            }
+            
             files.push({
               name: value.name,
               blob: value,
@@ -74,9 +86,20 @@ export default {
           }
         }
 
+        // Return validation errors if any files were rejected
+        if (validationErrors.length > 0) {
+          return new Response(
+            JSON.stringify({ 
+              error: 'Invalid file format(s)',
+              details: validationErrors 
+            }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
         if (files.length === 0) {
           return new Response(
-            JSON.stringify({ error: 'No files provided' }),
+            JSON.stringify({ error: 'No valid files provided' }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
