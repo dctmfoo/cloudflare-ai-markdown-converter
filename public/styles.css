@@ -781,13 +781,46 @@ body::before {
 .error-message {
   background: rgba(215, 38, 56, 0.05);
   border: 2px solid var(--press-red);
-  color: var(--press-red);
+  color: var(--ink-black);
   padding: 25px;
   margin-top: 20px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 15px;
   font-family: 'IBM Plex Mono', monospace;
+  line-height: 1.6;
+}
+
+.error-message svg {
+  color: var(--press-red);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.error-message strong {
+  color: var(--press-red);
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.1em;
+}
+
+.error-message p {
+  margin: 8px 0;
+  color: var(--ink-gray);
+  font-size: 0.9rem;
+}
+
+.error-message a {
+  color: var(--ink-black);
+  text-decoration: none;
+  border-bottom: 2px solid var(--ink-black);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.error-message a:hover {
+  color: var(--press-red);
+  border-bottom-color: var(--press-red);
 }
 
 /* Responsive Design */

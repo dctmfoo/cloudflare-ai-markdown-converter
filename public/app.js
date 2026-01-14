@@ -287,10 +287,16 @@ function showError(message) {
   uploadSection.style.display = 'none';
   resultsSection.style.display = 'block';
   
-  // Format multi-line error messages
-  const formattedMessage = message.split('\n').map(line => 
-    line.trim() ? `<p>${line}</p>` : ''
-  ).join('');
+  // Format multi-line error messages and convert URLs to links
+  const formattedMessage = message.split('\n').map(line => {
+    if (!line.trim()) return '';
+    
+    // Convert URLs to clickable links
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    const lineWithLinks = line.replace(urlRegex, '<a href="$1" target="_blank" rel="noopener">$1</a>');
+    
+    return `<p>${lineWithLinks}</p>`;
+  }).join('');
   
   markdownPreview.innerHTML = `
     <div class="error-message">

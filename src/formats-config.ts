@@ -108,5 +108,15 @@ export function getValidationError(filename: string, mimeType: string): string {
   const extension = filename.substring(filename.lastIndexOf('.'));
   const enabledLabels = getEnabledFormats().map(f => f.label).join(', ');
   
-  return `File "${filename}" (${extension}) is not supported. Supported formats: ${enabledLabels}`;
+  // Check if this format exists but is disabled
+  const fileExt = extension.toLowerCase();
+  const disabledFormat = Object.values(FORMATS_CONFIG).find(
+    config => !config.enabled && config.extensions.includes(fileExt)
+  );
+  
+  if (disabledFormat) {
+    return `File "${filename}" (${extension}) - ${disabledFormat.label} supported by Cloudflare AI but disabled on this instance. Fork the repo to enable: https://github.com/dctmfoo/cloudflare-ai-markdown-converter`;
+  }
+  
+  return `File "${filename}" (${extension}) is not a supported format. This instance accepts: ${enabledLabels}`;
 }
