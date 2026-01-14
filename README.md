@@ -31,7 +31,9 @@ This application uses Cloudflare's [Workers AI Markdown Conversion](https://deve
 
 ### Prerequisites
 
-You need a Cloudflare account with Workers AI enabled. 
+You need a Cloudflare account with Workers AI enabled.
+
+**Optional:** Set up [Cloudflare Turnstile](./TURNSTILE_SETUP.md) to protect against bots and abuse. 
 
 1. **Authenticate with Cloudflare:**
 ```bash
@@ -88,19 +90,39 @@ Upload files for conversion to Markdown.
 
 ## Development
 
+### Project Structure
+
 The backend logic is available in two versions:
 - `src/index.ts` - TypeScript version with type definitions
-- `public/_worker.js` - Production version (deployed to Cloudflare Pages Functions)
+- `public/_worker.js` - Production version (auto-generated from build, deployed to Cloudflare Pages Functions)
 
-To deploy:
+### Available Commands
+
 ```bash
+# Build TypeScript to JavaScript
+npm run build
+
+# Type check without building
+npm run typecheck
+
+# Run tests
+npm test
+
+# Build and deploy
+npm run deploy
+
+# Deploy only (without build)
 wrangler pages deploy public --project-name=cf-markdown
 ```
 
-To run tests:
+### Local Development
+
+To test locally with Wrangler:
 ```bash
-npm test
+wrangler pages dev public
 ```
+
+**Note:** The `public/_worker.js` file is auto-generated during build. Edit `src/index.ts` instead and run `npm run build`.
 
 ## License
 

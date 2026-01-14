@@ -5,6 +5,7 @@ export interface Env {
   ASSETS: {
     fetch(request: Request): Promise<Response>;
   };
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 export interface MarkdownDocument {
@@ -40,6 +41,28 @@ export default {
     if (url.pathname === '/api/convert' && request.method === 'POST') {
       try {
         const formData = await request.formData();
+        
+        // Verify Turnstile token if secret key is configured
+        const turnstileToken = formData.get('cf-turnstile-response');
+        if (env.TURNSTILE_SECRET_KEY && turnstileToken) {
+          const turnstileVerify = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              secret: env.TURNSTILE_SECRET_KEY,
+              response: turnstileToken,
+            }),
+          });
+          
+          const turnstileResult = await turnstileVerify.json() as { success: boolean };
+          if (!turnstileResult.success) {
+            return new Response(
+              JSON.stringify({ error: 'Verification failed. Please try again.' }),
+              { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+        }
+        
         const files: MarkdownDocument[] = [];
 
         for (const [, value] of formData.entries()) {

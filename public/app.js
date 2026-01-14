@@ -46,6 +46,8 @@ let selectedFiles = [];
 let convertedMarkdown = '';
 /** @type {'preview' | 'raw'} */
 let viewMode = 'preview';
+/** @type {string | null} */
+let turnstileToken = null;
 
 /**
  * Clean markdown by removing metadata sections
@@ -64,6 +66,22 @@ function cleanMarkdown(markdown) {
 }
 
 /**
+ * Turnstile callback when verification succeeds
+ * @param {string} token - The Turnstile token
+ */
+window.onTurnstileSuccess = function(token) {
+  turnstileToken = token;
+  updateConvertButton();
+};
+
+/**
+ * Update convert button state based on files and turnstile
+ */
+function updateConvertButton() {
+  convertBtn.disabled = selectedFiles.length === 0 || !turnstileToken;
+}
+
+/**
  * Handle file selection
  * @param {FileList | null} files - The selected files
  */
@@ -71,7 +89,7 @@ function handleFiles(files) {
   if (!files) return;
   selectedFiles = Array.from(files);
   displayFileList();
-  convertBtn.disabled = selectedFiles.length === 0;
+  updateConvertButton();
 }
 
 /**
@@ -92,7 +110,7 @@ function formatFileSize(bytes) {
 function removeFile(index) {
   selectedFiles.splice(index, 1);
   displayFileList();
-  convertBtn.disabled = selectedFiles.length === 0;
+  updateConvertButton();
 }
 
 // File Input Change
@@ -153,7 +171,7 @@ function displayFileList() {
 
 // Convert Files
 convertBtn.addEventListener('click', async () => {
-  if (selectedFiles.length === 0) return;
+  if (selectedFiles.length === 0 || !turnstileToken) return;
 
   convertBtn.disabled = true;
   loading.style.display = 'block';
@@ -164,6 +182,7 @@ convertBtn.addEventListener('click', async () => {
     selectedFiles.forEach(file => {
       formData.append('files', file);
     });
+    formData.append('cf-turnstile-response', turnstileToken);
 
     // Use appropriate API URL
     const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
@@ -316,9 +335,16 @@ newConversionBtn.addEventListener('click', () => {
   resultsSection.style.display = 'none';
   selectedFiles = [];
   convertedMarkdown = '';
+  turnstileToken = null;
   fileInput.value = '';
   displayFileList();
-  convertBtn.disabled = true;
+  
+  // Reset Turnstile
+  if (window.turnstile) {
+    window.turnstile.reset();
+  }
+  
+  updateConvertButton();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 

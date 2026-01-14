@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
   <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
   <!-- Animated background -->
@@ -80,6 +81,14 @@
 
         <!-- File List -->
         <div id="fileList" class="file-list"></div>
+
+        <!-- Turnstile CAPTCHA -->
+        <div class="turnstile-container">
+          <div class="cf-turnstile" 
+               data-sitekey="1x00000000000000000000AA"
+               data-callback="onTurnstileSuccess"
+               data-theme="dark"></div>
+        </div>
 
         <!-- Convert Button -->
         <button id="convertBtn" class="btn-convert" disabled>

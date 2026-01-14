@@ -354,6 +354,17 @@ body {
   border-color: var(--error);
 }
 
+/* Turnstile Container */
+.turnstile-container {
+  display: flex;
+  justify-content: center;
+  margin: 25px 0;
+  padding: 20px;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
 /* Convert Button */
 .btn-convert {
   width: 100%;
