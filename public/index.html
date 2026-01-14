@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+  <script src="config.js"></script>
 </head>
 <body>
   <!-- Animated background -->
@@ -40,13 +41,21 @@
       <p class="subtitle">Transform any document into beautiful Markdown using Cloudflare AI</p>
       
       <!-- Supported formats badges -->
-      <div class="supported-formats">
-        <span class="format-badge">PDF</span>
-        <span class="format-badge">Images</span>
-        <span class="format-badge">Office</span>
-        <span class="format-badge">HTML</span>
-        <span class="format-badge">CSV</span>
-        <span class="format-badge">+more</span>
+      <div class="supported-formats" id="formatBadges">
+        <!-- Dynamically populated from config -->
+      </div>
+      
+      <!-- Format notice -->
+      <div class="format-notice" id="formatNotice" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span id="formatNoticeText"></span>
+        <a href="https://github.com/dctmfoo/cloudflare-ai-markdown-converter" target="_blank" rel="noopener">
+          View on GitHub →
+        </a>
       </div>
     </header>
 
@@ -56,11 +65,11 @@
       <div class="upload-section" id="uploadSection">
         <div class="upload-area" id="dropZone">
           <input 
-            type="file" 
-            id="fileInput" 
-            multiple 
-            accept=".pdf,.jpg,.jpeg,.png,.webp,.svg,.html,.xml,.xlsx,.xlsm,.xlsb,.xls,.et,.docx,.ods,.odt,.csv,.numbers"
-            hidden
+          type="file" 
+          id="fileInput" 
+          multiple 
+          accept=""
+          hidden
           >
           
           <div class="upload-content">
@@ -72,7 +81,7 @@
               </svg>
             </div>
             <h3>Drop files here or click to browse</h3>
-            <p>Supports PDF, images, Office docs, HTML, XML, CSV, and more</p>
+            <p id="supportedFormatsText">Loading supported formats...</p>
             <button class="btn-browse" onclick="document.getElementById('fileInput').click()">
               Browse Files
             </button>
@@ -166,7 +175,13 @@
 
     <!-- Footer -->
     <footer class="footer">
-      <p>Powered by <strong>Cloudflare Workers AI</strong> • Built with <strong>ampcode</strong></p>
+      <p>
+        Powered by <strong>Cloudflare Workers AI</strong> • Built with <strong>ampcode</strong>
+        <br>
+        <a href="https://github.com/dctmfoo/cloudflare-ai-markdown-converter" target="_blank" rel="noopener" style="color: var(--ink-black); text-decoration: none; border-bottom: 1px solid var(--border-gray); margin-top: 8px; display: inline-block;">
+          GitHub Repository
+        </a>
+      </p>
     </footer>
   </div>
 

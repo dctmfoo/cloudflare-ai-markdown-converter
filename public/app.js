@@ -84,12 +84,22 @@ function updateConvertButton() {
 /**
  * Handle file selection
  * @param {FileList | null} files - The selected files
+ * @param {boolean} append - Whether to append or replace files
  */
-function handleFiles(files) {
+function handleFiles(files, append = false) {
   if (!files) return;
-  selectedFiles = Array.from(files);
+  
+  if (append) {
+    // Append new files to existing selection
+    selectedFiles = [...selectedFiles, ...Array.from(files)];
+  } else {
+    // Replace existing selection
+    selectedFiles = Array.from(files);
+  }
+  
   displayFileList();
   updateConvertButton();
+  updateDropZoneVisibility();
 }
 
 /**
@@ -115,7 +125,8 @@ function removeFile(index) {
 
 // File Input Change
 fileInput.addEventListener('change', (e) => {
-  handleFiles(/** @type {HTMLInputElement} */ (e.target).files);
+  const append = selectedFiles.length > 0; // Append if files already selected
+  handleFiles(/** @type {HTMLInputElement} */ (e.target).files, append);
 });
 
 // Drag and Drop
@@ -143,6 +154,18 @@ dropZone.addEventListener('drop', (e) => {
 });
 
 /**
+ * Update drop zone visibility based on file selection
+ */
+function updateDropZoneVisibility() {
+  const dropZoneElement = document.querySelector('.upload-area');
+  if (selectedFiles.length > 0) {
+    dropZoneElement.style.display = 'none';
+  } else {
+    dropZoneElement.style.display = 'block';
+  }
+}
+
+/**
  * Display the list of selected files
  */
 function displayFileList() {
@@ -151,7 +174,7 @@ function displayFileList() {
     return;
   }
 
-  fileList.innerHTML = selectedFiles.map((file, index) => `
+  const filesHTML = selectedFiles.map((file, index) => `
     <div class="file-item">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
@@ -167,6 +190,18 @@ function displayFileList() {
       </button>
     </div>
   `).join('');
+  
+  const addMoreButton = `
+    <div class="add-more-files" onclick="document.getElementById('fileInput').click()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>Add More Files</span>
+    </div>
+  `;
+  
+  fileList.innerHTML = filesHTML + addMoreButton;
 }
 
 // Convert Files
@@ -338,6 +373,7 @@ newConversionBtn.addEventListener('click', () => {
   turnstileToken = null;
   fileInput.value = '';
   displayFileList();
+  updateDropZoneVisibility();
   
   // Reset Turnstile
   if (window.turnstile) {
@@ -351,5 +387,45 @@ newConversionBtn.addEventListener('click', () => {
 // Add smooth scroll behavior
 document.documentElement.style.scrollBehavior = 'smooth';
 
+// Initialize formats from config
+function initializeFormats() {
+  // Set accept attribute
+  fileInput.setAttribute('accept', getAcceptString());
+  
+  // Populate format badges
+  const formatBadgesContainer = document.getElementById('formatBadges');
+  const badges = getFormatBadges();
+  formatBadgesContainer.innerHTML = badges.map(label => 
+    `<span class="format-badge">${label}</span>`
+  ).join('');
+  
+  // Update supported formats text
+  const supportedText = document.getElementById('supportedFormatsText');
+  if (supportedText) {
+    const enabledLabels = badges.join(', ');
+    supportedText.textContent = `Supports ${enabledLabels} documents`;
+  }
+  
+  // Show notice if any high-cost formats are disabled
+  const disabledHighCost = [];
+  for (const [key, config] of Object.entries(FORMATS_CONFIG.formats)) {
+    if (!config.enabled && config.costTier === 'high') {
+      disabledHighCost.push(config.label);
+    }
+  }
+  
+  if (disabledHighCost.length > 0) {
+    const noticeElement = document.getElementById('formatNotice');
+    const noticeText = document.getElementById('formatNoticeText');
+    
+    if (noticeElement && noticeText) {
+      noticeText.textContent = `${disabledHighCost.join(', ')} disabled to control AI costs. `;
+      noticeElement.style.display = 'flex';
+    }
+  }
+}
+
 // Initialize
+initializeFormats();
 displayFileList();
+updateDropZoneVisibility();
