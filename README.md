@@ -29,21 +29,38 @@ This application uses Cloudflare's [Workers AI Markdown Conversion](https://deve
 
 ## Setup
 
-1. Install dependencies:
+### Prerequisites
+
+You need a Cloudflare account with Workers AI enabled. 
+
+1. **Authenticate with Cloudflare:**
+```bash
+wrangler login
+```
+
+2. **Install dependencies:**
 ```bash
 npm install
 ```
 
-2. Configure Wrangler with AI binding in `wrangler.toml`:
-```toml
-[ai]
-binding = "AI"
+3. **Build the project:**
+```bash
+npm run build
 ```
 
-3. Deploy to Cloudflare Pages:
+4. **Create Cloudflare Pages project:**
+```bash
+wrangler pages project create cf-markdown --production-branch=main
+```
+
+5. **Deploy to Cloudflare Pages:**
 ```bash
 npm run deploy
+# or manually:
+wrangler pages deploy public --project-name=cf-markdown
 ```
+
+The AI binding is already configured in `wrangler.toml`.
 
 ## API Endpoint
 
