@@ -419,7 +419,7 @@ function initializeFormats() {
     const noticeText = document.getElementById('formatNoticeText');
     
     if (noticeElement && noticeText) {
-      noticeText.textContent = `${disabledHighCost.join(', ')} disabled to control AI costs. `;
+      noticeText.textContent = `${disabledHighCost.join(', ')} supported by Cloudflare AI but disabled on this instance to manage costs. `;
       noticeElement.style.display = 'flex';
     }
   }

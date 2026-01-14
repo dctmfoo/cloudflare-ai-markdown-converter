@@ -65,8 +65,10 @@ The UI will automatically:
 
 ## Current Configuration
 
-✅ **Enabled:** PDF, HTML, XML, Office, OpenDocument, CSV, Apple  
-❌ **Disabled:** Images (to control costs)
+✅ **Enabled on this instance:** PDF, HTML, XML, Office, OpenDocument, CSV, Apple  
+⚠️ **Supported by Cloudflare but disabled here:** Images (to control costs)
+
+**Note:** All formats listed are technically supported by Cloudflare Workers AI. The configuration here only controls which formats THIS deployment accepts.
 
 ## Example: Enable Images
 
