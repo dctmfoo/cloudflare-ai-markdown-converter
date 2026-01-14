@@ -6,7 +6,9 @@ Convert various file formats to Markdown using Cloudflare Workers AI.
 
 ## How It Works
 
-This application uses Cloudflare's [Workers AI Markdown Conversion](https://developers.cloudflare.com/workers-ai/features/markdown-conversion/) feature, which provides the `env.AI.toMarkdown()` method to convert documents in multiple formats to Markdown. The conversion uses AI models for intelligent document parsing and image analysis.
+This application uses Cloudflare's **[Workers AI Markdown Conversion](https://developers.cloudflare.com/workers-ai/features/markdown-conversion/)** feature, which provides the `env.AI.toMarkdown()` method to convert documents in multiple formats to Markdown. The conversion uses AI models for intelligent document parsing and image analysis.
+
+**Learn more:** [Cloudflare Workers AI - Markdown Conversion Documentation](https://developers.cloudflare.com/workers-ai/features/markdown-conversion/)
 
 ## Supported Formats
 
